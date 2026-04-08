@@ -1,5 +1,57 @@
 import pandas as pd
 from pandas import DataFrame
+from rapidfuzz import fuzz, process
+
+
+def find_equals_name(strings: list, threshold: int = 80) -> dict:
+    """
+    Find and map similar strings from a list using fuzzy matching.
+    If similarity more then the threshold, prompts user to
+    choose which string is correct. Returns a mapping of duplicates.
+
+    :param strings: list of strings
+    :param threshold: from 0 to 100
+    :return: dictionary {incorrect_id: correct_id}
+    """
+
+    results = []
+    equal_shop_name: dict = {}
+    for i, string in enumerate(strings):
+        choices = strings[i + 1 :]
+
+        match = process.extractOne(string, choices, scorer=fuzz.ratio)
+
+        if match and match[1] >= threshold:
+            results.append(
+                {
+                    "original_1": string,
+                    "original_2": choices[match[2]],
+                    "similarity": match[1],
+                    "id_1": i,
+                    "id_2": match[2] + i + 1,
+                }
+            )
+    results.sort(key=lambda x: x["similarity"], reverse=True)
+    for i, res in enumerate(results):
+        print(
+            f"({i + 1}/{len(results)})"
+            f"Which name is correct (similarity {res['similarity']: .5})\n"
+            f"\t1) {res['original_1']} {res['id_1']}\n"
+            f"\t2) {res['original_2']} {res['id_2']}\n"
+            f"\t3) Skip\n"
+            f"\t4) Skip all"
+        )
+        choice = int(input())
+        match choice:
+            case 1:
+                equal_shop_name[res["id_2"]] = res["id_1"]
+            case 2:
+                equal_shop_name[res["id_1"]] = res["id_2"]
+            case 3:
+                pass
+            case 4:
+                break
+    return equal_shop_name
 
 
 def delete_equal_shop_name(
@@ -21,11 +73,12 @@ def delete_equal_shop_name(
     # "Якутск ТЦ "Центральный"" and "!Якутск ТЦ "Центральный" фран"
     # (correct_id=58, incorrect=1)
 
-    equal_shop_map = {
-        10: 11,
-        0: 57,
-        1: 58,
-    }
+    # equal_shop_map = {
+    #     10: 11,
+    #     0: 57,
+    #     1: 58,
+    # }
+    equal_shop_map = find_equals_name(shop_df["shop_name"].to_list())
     shop_df = shop_df.copy()
     shop_df["new_shop_id"] = shop_df["shop_id"]
 
