@@ -218,9 +218,10 @@ def main():
     percent = 1 - len(sales_train_df_fix) / len(sales_train_df_old)
     print(f"Was deleted {percent: .2%} of data")
 
-    sales_train_df_fix.to_csv("../data/preprocessed/sales_train_preprocessed.csv")
-    shops_df_fix.to_csv("../data/preprocessed/shops_preprocessed.csv")
-    test_df_fix.to_csv("../data/preprocessed/test_preprocessed.csv")
+    sales_train_df_fix.to_csv(
+        "../data/preprocessed/sales_train_preprocessed.csv", index=False)
+    shops_df_fix.to_csv("../data/preprocessed/shops_preprocessed.csv", index=False)
+    test_df_fix.to_csv("../data/preprocessed/test_preprocessed.csv", index=False)
 
 
 if __name__ == "__main__":
