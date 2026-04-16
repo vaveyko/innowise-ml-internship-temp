@@ -36,8 +36,8 @@ def find_equals_name(strings: list, threshold: int = 80) -> dict:
         print(
             f"({i + 1}/{len(results)})"
             f"Which name is correct (similarity {res['similarity']: .5})\n"
-            f"\t1) {res['original_1']} {res['id_1']}\n"
-            f"\t2) {res['original_2']} {res['id_2']}\n"
+            f"\t1) {res['original_1']} | index={res['id_1']}\n"
+            f"\t2) {res['original_2']} | index={res['id_2']}\n"
             f"\t3) Skip\n"
             f"\t4) Skip all"
         )
@@ -191,17 +191,17 @@ def fix_data(
     return sales_df, shop_df, test_df
 
 
-def main():
+def main(data_dir: str = "../data"):
     """
     Read data, fix it and load correct version into memory
 
     :return: None
     """
     # read data
-    items_df = pd.read_csv("../data/items.csv")
-    sales_train_df = pd.read_csv("../data/sales_train.csv")
-    shops_df = pd.read_csv("../data/shops.csv")
-    test_df = pd.read_csv("../data/test.csv")
+    items_df = pd.read_csv(data_dir + "/items.csv")
+    sales_train_df = pd.read_csv(data_dir + "/sales_train.csv")
+    shops_df = pd.read_csv(data_dir + "/shops.csv")
+    test_df = pd.read_csv(data_dir + "/test.csv")
 
     # fix
     sales_train_df_fix, shops_df_fix, test_df_fix = fix_data(
@@ -219,9 +219,11 @@ def main():
     print(f"Was deleted {percent: .2%} of data")
 
     sales_train_df_fix.to_csv(
-        "../data/preprocessed/sales_train_preprocessed.csv", index=False)
-    shops_df_fix.to_csv("../data/preprocessed/shops_preprocessed.csv", index=False)
-    test_df_fix.to_csv("../data/preprocessed/test_preprocessed.csv", index=False)
+        data_dir + "/preprocessed/sales_train_preprocessed.csv", index=False
+    )
+    shops_df_fix.to_csv(data_dir + "/preprocessed/shops_preprocessed.csv", index=False)
+    test_df_fix.to_csv(data_dir + "/preprocessed/test_preprocessed.csv", index=False)
+    return
 
 
 if __name__ == "__main__":
