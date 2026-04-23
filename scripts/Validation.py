@@ -11,7 +11,7 @@ class ModelValidation:
     def __init__(
         self,
         data: DataFrame,
-        y: str | list[str],
+        y: str,
         x: str | list[str] = None,
     ):
         """
@@ -157,7 +157,7 @@ def fit_validate(
 # Example of using
 def main():
     df = read_csv("../data/preprocessed/sales_train_preprocessed.csv")
-    val_model = ModelValidation(df, ["item_cnt_month"])
+    val_model = ModelValidation(df, "item_cnt_month")
 
     # use 33 because we have data of 33 month
     splitter = val_model.split_data(n_splits=33, window_type="sliding", train_size=3)

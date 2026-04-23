@@ -140,9 +140,19 @@ def from_day_to_month(sales_df: DataFrame) -> DataFrame:
     :return: modified DataFrame
     """
 
+    sales_df["date"] = pd.to_datetime(sales_df["date"], dayfirst=True)
+    sales_df["month"] = sales_df["date"].dt.month
+
     sales_df = (
         sales_df.groupby(["date_block_num", "shop_id", "item_id"])
-        .agg({"item_cnt_day": "sum", "item_price": "mean", "item_category_id": "first"})
+        .agg(
+            {
+                "item_cnt_day": "sum",
+                "item_price": "mean",
+                "item_category_id": "first",
+                "month": "first",
+            }
+        )
         .reset_index()
     )
     # TODO check if item_price is useful column
