@@ -6,18 +6,22 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "black==22.6.0",
+    "catboost>=1.2.10",
     "flake8==6.0.0",
     "matplotlib==3.10.8",
     "numpy==2.4.3",
     "pandas==3.0.1",
     "pre-commit==4.0.1",
     "rapidfuzz==3.14.3",
+    "scikit-learn>=1.8.0",
     "seaborn==0.13.2",
+    "shap>=0.51.0",
     "tqdm==4.67.3",
 ]
 
 [dependency-groups]
 dev = [
     "ipykernel>=7.2.0",
+    "ipywidgets>=8.1.8",
     "notebook>=7.5.5",
 ]
