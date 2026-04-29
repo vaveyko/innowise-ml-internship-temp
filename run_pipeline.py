@@ -1,10 +1,9 @@
-from scripts.ETL import main as preprocess_data
-from scripts.Model import fit_model, make_predict
+from src.model_kaggle_vaveyko import make_predict, fit_model, ETL
 
 
 if __name__ == "__main__":
     print("Start Preprocessing data".center(40, "="))
-    preprocess_data("data")
+    ETL("data", "data/preprocessed")
 
     print("Start fit model".center(40, "="))
     model = fit_model("data/preprocessed/sales_train_preprocessed.csv")

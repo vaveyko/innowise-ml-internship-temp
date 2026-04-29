@@ -642,18 +642,24 @@ def fix_data(
     return sales_df, shop_df, test_df, category_df
 
 
-def main(data_dir: str = "../data"):
+def ETL(data_read_dir: str = "../data", data_write_dir: str = "../data/preprocessed"):
     """
     Read data, fix it and load correct version into memory
+    Read:
+        items.csv
+        sales_train.csv
+        shops.csv
+        test.csv
+        item_categories.csv
 
     :return: None
     """
     # read data
-    items_df = pd.read_csv(data_dir + "/items.csv")
-    sales_train_df = pd.read_csv(data_dir + "/sales_train.csv")
-    shops_df = pd.read_csv(data_dir + "/shops.csv")
-    test_df = pd.read_csv(data_dir + "/test.csv")
-    category_df = pd.read_csv(data_dir + "/item_categories.csv")
+    items_df = pd.read_csv(data_read_dir + "/items.csv")
+    sales_train_df = pd.read_csv(data_read_dir + "/sales_train.csv")
+    shops_df = pd.read_csv(data_read_dir + "/shops.csv")
+    test_df = pd.read_csv(data_read_dir + "/test.csv")
+    category_df = pd.read_csv(data_read_dir + "/item_categories.csv")
 
     # fix
     sales_train_df_fix, shops_df_fix, test_df_fix, category_df_fix = fix_data(
@@ -668,12 +674,15 @@ def main(data_dir: str = "../data"):
     print(f"Was deleted {percent: .2%} of data")
 
     sales_train_df_fix.to_csv(
-        data_dir + "/preprocessed/sales_train_preprocessed.csv", index=False
+        data_write_dir + "/sales_train_preprocessed.csv", index=False
     )
-    shops_df_fix.to_csv(data_dir + "/preprocessed/shops_preprocessed.csv", index=False)
-    test_df_fix.to_csv(data_dir + "/preprocessed/test_preprocessed.csv", index=False)
+    shops_df_fix.to_csv(data_write_dir + "/shops_preprocessed.csv", index=False)
+    test_df_fix.to_csv(data_write_dir + "/test_preprocessed.csv", index=False)
+    category_df_fix.to_csv(
+        data_write_dir + "/item_categories_preprocessed.csv", index=False
+    )
     return
 
 
 if __name__ == "__main__":
-    main()
+    ETL()
