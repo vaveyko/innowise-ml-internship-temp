@@ -56,12 +56,16 @@ def find_equals_name(strings: list, threshold: int = 80) -> dict:
 
 
 def delete_equal_shop_name(
-    sales_df: DataFrame, shop_df: DataFrame, test_df: DataFrame
+    sales_df: DataFrame,
+    shop_df: DataFrame,
+    test_df: DataFrame,
+    is_human_in_loop: bool = True,
 ) -> tuple[DataFrame, DataFrame, DataFrame]:
     """
     Delete from shop_df equal shop names, reset id and replace old shop_id with new ones
     in sales_df and test_df
 
+    :param is_human_in_loop:
     :param sales_df:
     :param shop_df:
     :param test_df:
@@ -74,12 +78,14 @@ def delete_equal_shop_name(
     # "Якутск ТЦ "Центральный"" and "!Якутск ТЦ "Центральный" фран"
     # (correct_id=58, incorrect=1)
 
-    # equal_shop_map = {
-    #     10: 11,
-    #     0: 57,
-    #     1: 58,
-    # }
-    equal_shop_map = find_equals_name(shop_df["shop_name"].to_list())
+    if is_human_in_loop:
+        equal_shop_map = find_equals_name(shop_df["shop_name"].to_list())
+    else:
+        equal_shop_map = {
+            10: 11,
+            0: 57,
+            1: 58,
+        }
     shop_df = shop_df.copy()
     shop_df["new_shop_id"] = shop_df["shop_id"]
 
@@ -454,10 +460,12 @@ def fix_data(
     shop_df: DataFrame,
     test_df: DataFrame,
     category_df: DataFrame,
+    is_human_in_loop: bool,
 ) -> tuple[DataFrame, DataFrame, DataFrame, DataFrame]:
     """
     Preprocesses dataframes. Copes with outliers. Bring into the correct form.
 
+    :param is_human_in_loop:
     :param sales_df:
     :param items_df:
     :param shop_df:
@@ -474,7 +482,9 @@ def fix_data(
         sales_df = sales_df[~negative_mask]
 
     # equal shop names
-    sales_df, shop_df, test_df = delete_equal_shop_name(sales_df, shop_df, test_df)
+    sales_df, shop_df, test_df = delete_equal_shop_name(
+        sales_df, shop_df, test_df, is_human_in_loop
+    )
 
     # Add category id in data
     sales_df = sales_df.join(items_df["item_category_id"], on="item_id")
@@ -642,7 +652,11 @@ def fix_data(
     return sales_df, shop_df, test_df, category_df
 
 
-def ETL(data_read_dir: str = "../data", data_write_dir: str = "../data/preprocessed"):
+def ETL(
+    data_read_dir: str = "../../data",
+    data_write_dir: str = "../../data/preprocessed",
+    is_human_in_loop: bool = True,
+):
     """
     Read data, fix it and load correct version into memory
     Read:
@@ -663,7 +677,7 @@ def ETL(data_read_dir: str = "../data", data_write_dir: str = "../data/preproces
 
     # fix
     sales_train_df_fix, shops_df_fix, test_df_fix, category_df_fix = fix_data(
-        sales_train_df, items_df, shops_df, test_df, category_df
+        sales_train_df, items_df, shops_df, test_df, category_df, is_human_in_loop
     )
 
     # convert to calculate percent of deleted data
